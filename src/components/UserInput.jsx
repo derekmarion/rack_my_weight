@@ -9,17 +9,38 @@ function UserInput (props) {
     const rackWeights = (e) => {
         e.preventDefault();
         setWeights({
-            maxWeight: inputMaxWeight, 
-            minWeight: inputMinWeight,
-            numberSets: inputNumberSets,
+            maxWeight: Number(inputMaxWeight), 
+            minWeight: Number(inputMinWeight),
+            numberSets: Number(inputNumberSets),
         });
-        console.log(weights);
+    };
+
+    function isObjectEmpty(obj) {
+        return Object.keys(obj).length === 0;
+    }
+
+    function calculateWeights(weights) {
+        const plates = [45, 35, 20, 10, 5];
+        if (!isObjectEmpty(weights)) {
+            let increments = (weights.maxWeight - weights.minWeight) / (weights.numberSets - 1);
+            let setData = {};
+            let setName = "Set 1";
+            setData[setName] = weights.minWeight;
+            for (let i = 2; i <= weights.numberSets; i++) {
+                let setName = "Set " + String(i); 
+                setData[setName] = weights.minWeight + (i - 1) * increments;
+            };
+            console.log(setData);
+        } else {
+            console.error("Weights have not been entered yet.")
+        }
     };
 
     useEffect(() => {
         // Log the updated state whenever it changes
-        console.log(weights);   
-        //add function to cal
+        console.log(weights); 
+        console.log(calculateWeights(weights));  
+        //calculate rack weights function call
     }, [weights]);
 
     return (
@@ -51,7 +72,5 @@ function UserInput (props) {
     </div>
     )
 }
-
-//add function to calculate rack weights
 
 export default UserInput;
