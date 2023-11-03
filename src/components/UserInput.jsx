@@ -20,21 +20,37 @@ function UserInput (props) {
     }
 
     function calculateWeights(weights) {
-        const plates = [45, 35, 20, 10, 5];
         if (!isObjectEmpty(weights)) {
             let increments = (weights.maxWeight - weights.minWeight) / (weights.numberSets - 1);
             let setData = {};
             let setName = "Set 1";
-            setData[setName] = weights.minWeight;
+            setData[setName] = {"weight": weights.minWeight};
+            setData[setName]['plate loadout'] = calculatePlates(setData[setName]["weight"]);
             for (let i = 2; i <= weights.numberSets; i++) {
                 let setName = "Set " + String(i); 
-                setData[setName] = weights.minWeight + (i - 1) * increments;
-            };
+                setData[setName] = {"weight": weights.minWeight + (i - 1) * increments}
+                setData[setName]['plate loadout'] = calculatePlates(setData[setName]["weight"]);//each set should have a plate object
+            }
             console.log(setData);
         } else {
             console.error("Weights have not been entered yet.")
         }
-    };
+    }
+
+    function calculatePlates(weight) {
+        const barWeight = 45;
+        weight -= barWeight; //Subtract the weight of the bar first
+
+        const plates = [45, 35, 20, 10, 5, 2.5];
+        let plateObj = {};
+        let remainingWeight = weight / 2;
+        for (let i = 0; i < plates.length; i++) {
+            let number_plates = Math.floor(remainingWeight / plates[i]);
+            plateObj[plates[i]] = number_plates * 2;
+            remainingWeight -= number_plates * plates[i];
+        }   
+        return plateObj;
+    }
 
     useEffect(() => {
         // Log the updated state whenever it changes
